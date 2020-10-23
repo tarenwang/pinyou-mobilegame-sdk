@@ -157,12 +157,12 @@ dependencies {
 
 ```java
 PYLoginSDK.getInstance().init(activity, new InitCallbak() {
-    @override
+    @Override
     public void onSuccess() {
         // 初始化成功
     }
 
-    @override
+    @Override
     public void onFail() {
         // 初始化失败
     }
@@ -271,7 +271,7 @@ if (PYLoginSDK.getInstance().showThirdPartyLoginButton("google")) {
 
 #### 2.5 支付(必接)
 
-本接口中sign签名请 [参考签名规则](server-api-overview.md#签名规则)，**参与签名计算的参数包含appId、accountId、token、productId、roleId、serverId、amount、currency、extra**
+本接口中sign签名请 [参考签名规则](server-api-overview.md#签名规则)，**参与签名计算的参数包含appId、accountId、token、productId、roleId、serverId、amount、currency、extra**。为了保障支付的安全性，签名计算请在游戏服务端中进行，保证`appSecret`不被非法破解获取。
 
 ```java
 PayParam param = new PayParam();
