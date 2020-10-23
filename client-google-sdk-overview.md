@@ -246,7 +246,7 @@ PYLoginSDK.getInstance().login(new LoginCallback() {
 
 // 不使用SDK登录界面，游戏自己实现Google、Facebook、还有游客登录的按钮；当按钮被点击时，分别调用以下接口
 // Google举例
-PYLoginSDK.getInstance().loginWithThirdParty("google", new LoginCallback() {
+PYLoginSDK.getInstance().loginWithThirdParty("google_playgame", new LoginCallback() {
     @Override
     public void onSuccess(UserInfo user) {
         // 登录成功
@@ -279,7 +279,7 @@ PYLoginSDK.getInstance().loginWithThirdParty("google", new LoginCallback() {
 
 ```java
 // Google举例
-if (PYLoginSDK.getInstance().showThirdPartyLoginButton("google")) {
+if (PYLoginSDK.getInstance().showThirdPartyLoginButton("google_playgame")) {
     // 游戏中显示Google登录按钮
 } else {
     // 游戏中隐藏Google登录按钮
@@ -364,7 +364,7 @@ PYLoginSDK.getInstance().share("SDK分配的分享ID", shareParams, new ShareCal
 });
 ```
 
-#### 2.9 Activity生命周期(必接)
+#### 2.8 Activity生命周期(必接)
 
 游戏主窗体中直接重写一下父类方法：
 
@@ -414,9 +414,10 @@ android {
 
 |accountType|说明|
 |---|---|
-|google|Google帐号|
-|facebook|Facebook帐号|
+|google_playgame|Google帐号|
+|facebook_android|Facebook帐号|
 |guest|游客帐号|
+|pinyou|品游帐号|
 
 #### 货币类型
 

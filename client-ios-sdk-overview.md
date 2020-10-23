@@ -78,17 +78,18 @@
 
 ![](assets/ios/0F05255B-A17A-42A9-8230-D2D1F583BFF1.png)
 
-### 二、聚合SDK接入说明
+### 二、游戏调用平台
 
-#### 2.1 初始化
+注：以下接口暂只提供直Objective-C层，具体Objective-C层与游戏层数据交互由接入方自行实现
+
+#### 2.1 初始化(必接)
 
 请在iOS程序的`AppDelegate.m`里的`(BOOL)application:didFinishLaunchingWithOptions:`进行调用：
 
 引入header文件
 
 ```objective-c
-#import "IctitanUnionSDK.h"
-#import "ITTType.h"
+#import "PYChannelSDK.h"
 ```
 
 在`(BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions`插入如下代码:
@@ -96,51 +97,197 @@
 ```objective-c
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     ...
-    //ITTDebugStatusOn 开启调试
-    //ITTDebugStatusOff 关闭调试，正式上线时候请关闭日志
-    [[IctitanUnionSDK sharedInstance] init:ITTDebugStatusOn];
+    [[PYChannelSDK sharedInstance] init:@"SDK分配的应用ID"];
 
     ...
     return YES;
 }
 ```
 
+#### 2.2 切换SDK显示语言(必接)
+
+此方法适用于多地区多语言发行的手游。研发商可以在游戏的任何地方使用此方法，SDK会根据选择的语言进行切换。
+
+引入header文件
+
+```objective-c
+#import "PYChannelSDK.h"
+```
+
+事件中插入如下代码：
+
+```objective-c
+// 使用SDK登录界面
+[[PYChannelSDK sharedInstance] switchLanguage:@"en"];
+```
+
+所有的语言`language`请参考附录中的[显示语言](#显示语言)
+
+#### 2.3 登录(必接)
+
+SDK提供给研发商两种接入登录的方式：
+1. SDK提供登录弹出界面，包含帐号、密码登录和各种三方登录
+2. 不使用SDK的登录界面，游戏自己实现各种三方登录的按钮
+
+研发商根据需要选择一种方式接入。
+
+引入header文件
+
+```objective-c
+#import "PYChannelSDK.h"
+```
+
+事件中插入如下代码：
+
+```objective-c
+// 使用SDK登录界面
+[[PYChannelSDK sharedInstance] login];
+
+// 不使用SDK登录界面，游戏自己实现Google、Facebook、还有游客登录的按钮；当按钮被点击时，分别调用以下接口
+// Google举例
+[[PYChannelSDK sharedInstance] loginWithThirdParty:@"google"];
+```
+
+所有的帐号类型`accountType`请参考附录中的[三方帐号类型](#三方帐号类型)
+
+#### 2.4 是否显示三方登录按钮(选接)
+
+当研发商选择游戏自己实现Google、Facebook等三方登录按钮的情况下，必须先调用此接口，如果返回`true`，才能在游戏中显示相关按钮；如果研发商选择使用SDK的登录界面，此接口不用接入。
+
+引入header文件
+
+```objective-c
+#import "PYChannelSDK.h"
+```
+
+事件中插入如下代码：
+
+```objective-c
+if ([[PYChannelSDK sharedInstance] showThirdPartyLoginButton:@"google"]) {
+    // 游戏中显示Google登录按钮
+} else {
+    // 游戏中隐藏Google登录按钮
+}
+```
+
+所有的帐号类型`accountType`请参考附录中的[三方帐号类型](#三方帐号类型)
+
+#### 2.5 支付(必接)
+
+本接口中sign签名请 [参考签名规则](server-api-overview.md#签名规则)，**参与签名计算的参数包含appId、accountId、token、productId、roleId、serverId、amount、currency、extra**。为了保障支付的安全性，签名计算请在游戏服务端中进行，保证`appSecret`不被非法破解获取。
+
+引入header文件
+
+```objective-c
+#import "PYChannelPayment.h"
+#import "PYChannelSDK.h"
+```
+
+事件中插入如下代码：
+
+```objective-c
+PYChannelPayment *param = [[PYChannelPayment alloc] init];
+[param setAppId:@"SDK平台分配的游戏ID"];
+[param setAccountId:@"SDK平台账号ID"];
+[param setToken:@"SDK平台账号Token"];
+[param setProductId:@"商品ID"];
+[param setProductName:@"商品名称"];
+[param setRoleId:@"玩家的游戏角色ID"];
+[param setRoleName:@"玩家的游戏角色名"];
+[param setServerId:@"游戏服务器ID"];
+[param setServerName:@"游戏服务器名"];
+[param setAmount:@1.0];
+[param setCurrency:@"USD"]; // 所有的货币类型currency请参考附录中的货币类型
+[param setExtra:@"支付成功时原样返回至游戏服务器的额外参数；可以是游戏生成的订单号"];
+[param setNotifyUrl:@"内购商品支付完成的通知URL"]; // 如果以SDK后台设置的通知URL为主，则此参数可以不传
+[param setSign:@"签名"];
+
+[[PYChannelSDK sharedInstance] pay:param];
+```
+
+#### 2.6 注销登录(选接)
+
+引入header文件
+
+```objective-c
+#import "PYChannelSDK.h"
+```
+
+事件中插入如下代码：
+
+```objective-c
+[[PYChannelSDK sharedInstance] logout];
+```
+
+#### 2.7 分享(选接)
+
+引入header文件
+
+```objective-c
+#import "PYChannelSDK.h"
+```
+
+事件中插入如下代码：
+
+```objective-c
+NSString *shareId = @"SDK分配的分享ID";
+NSDictionary *shareParams = @{@"displayName": @"你好啊"};
+
+[[PYChannelSDK sharedInstance] shareToSocialNetwork:shareId andShareParams:shareParams];
+```
+
+#### 2.8 重要的重写方法
+
 重写AppDelegate的openURL、applicationDidBecomeActive以及continueUserActivity
+
+引入header文件
+
+```objective-c
+#import "PYChannelSDK.h"
+```
+
+插入如下代码：
 
 ```objective-c
 // 如果iOS SDK版本小于9
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-    return [[IctitanUnionSDK sharedInstance application:application openURL:url sourceApplication:sourceApplication annotation:annotation];
+    return [[PYChannelSDK sharedInstance application:application openURL:url sourceApplication:sourceApplication annotation:annotation];
 }
 
 // 如果iOS SDK版本大于或等于9
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-    return [[IctitanUnionSDK sharedInstance] application:application openURL:url options:options];
+    return [[PYChannelSDK sharedInstance] application:application openURL:url options:options];
 } 
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-    [[IctitanUnionSDK shareInstance] applicationDidBecomeActive:application];
+    [[PYChannelSDK shareInstance] applicationDidBecomeActive:application];
 }
 
 // 如果iOS SDK版本大于或等于9
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler{
-    return [[IctitanUnionSDK sharedInstance] application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
+    return [[PYChannelSDK sharedInstance] application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
 }
 
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [[PYChannelSDK sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
+
+    ...
+    return YES;
+}
 ```
 
-#### 2.2 回调接口
+#### 2.9 回调接口
 
-在游戏界面显示时，给SDK设置可以依附的UIViewController对象，并在该类文件增加IctitanUnionDelegate协议，请在此协议中实现游戏的初始化、登录、注销、支付、分享功能
+在游戏界面显示时，给SDK设置可以依附的UIViewController对象，并在该类文件增加PYChannelDelegate协议，请在此协议中实现游戏的初始化、登录、注销、支付、分享功能
 
 ```objective-c
-#import "IctitanUnionSDK.h"
-#import "IctitanUnionDelegate.h"
-#import "ITTUser.h"
-#import "ITTType.h"
+#import "PYChannelSDK.h"
+#import "PYChannelDelegate.h"
+#import "PYChannelUser.h"
+#import "PYChannelType.h"
 
-@interface ViewController () <IctitanUnionDelegate>
-@property (nonatomic, strong) ITTUser *user;
+@interface ViewController () <PYChannelDelegate>
+@property (nonatomic, strong) PYChannelUser *user;
 @end
 
 @implementation ViewController
@@ -148,55 +295,56 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // 设置回调主体
-    [[IctitanUnionSDK shareInstance] setCallBackController:self];
+    [[PYChannelSDK sharedInstance] setDelegate:self];
 }
 
 // 初始化回调
-- (void)IctitanUnionInitCallback:(UnionSdkCallbackCode)code andMessage:(NSString *)message {
-    if (ITTCodeSuc == code) {
+- (void)PYChannelInitCallback:(ChannelSdkCallbackCode)code andMessage:(NSString *)message {
+    if (PYChannelCodeSuc == code) {
         //初始化成功
         NSLog(@"初始化成功");
-    } else if (ITTCodeFail == code) {
+    } else {
         //初始化失败
-        NSLog(@"初始化失败，msg=%@",message);
+        NSLog(@"初始化失败，msg=%@", message);
     }
 }
 
 // 登录回调
-- (void)IctitanUnionLoginCallback:(UnionSdkCallbackCode)code andMessage:(NSString *)message andUser:(ITTUser *)user {
-    if (ITTCodeSuc == code) {
+- (void)PYChannelLoginCallback:(ChannelSdkCallbackCode)code andMessage:(NSString *)message andUser:(PYChannelUser *)user {
+    if (PYChannelCodeSuc == code) {
         //登录成功
         NSLog(@"登录成功");
         _user = user;
         // user.accountId   帐号唯一标识
         // user.token       登陆令牌
-        // user.channelId   渠道id
-        // user.appId       游戏id
-        // user.avatarUrl   用户头像URL
+        // user.username    帐号名
         // user.nickname    昵称
-        // user.type        帐号类型(facebook,google,apple,guest,amazon)
-    } else if (ITTCodeFail == code) {
+        // user.avatarUrl   用户头像URL
+        // user.loginType   帐号类型(facebook,google,apple,guest)
+        // user.firstLogin  是否首次登录
+    } else {
         //登录失败
         NSLog(@"登录失败：%@", message);
     }
 }
 
 // 注销回调
-- (void)IctitanUnionLogoutCallback:(UnionSdkCallbackCode)code andMessage:(NSString *)message {
-    if (ITTCodeSuc == code) {
+- (void)PYChannelLogoutCallback:(ChannelSdkCallbackCode)code andMessage:(NSString *)message {
+    if (PYChannelCodeSuc == code) {
         //注销成功
         NSLog(@"注销成功");
         _user = nil;
-    } else if (ITTCodeFail == code) {
+    } else {
         //注销失败
         NSLog(@"注销失败，msg=%@", message);
     }
 }
 
 // 支付回调
-- (void)IctitanUnionPayCallback:(UnionSdkCallbackCode)code andMessage:(NSString *)message {
-    if (ITTCodeSuc == code) {
-        //支付成功，订单数据通过服务端接口回调
+- (void)PYChannelPayCallback:(ChannelSdkCallbackCode)code andMessage:(NSString *)message {
+    if (PYChannelCodeSuc == code) {
+        //支付成功
+        // 注意：SDK返回成功后，不能马上发送物品给玩家，要等到游戏服务端收到“内购商品支付完成通知”后才能发送
         NSLog(@"支付成功");
     } else if (ITTCodeFail == code) {
         //支付失败
@@ -218,133 +366,32 @@
 @end
 ```
 
-#### 2.3 登录
+### 附录
 
-请在iOS程序的`ViewController.m`里的**按钮点击事件**或者**加载事件**中进行调用：
+#### 显示语言
 
-引入header文件
+|language|说明|
+|---|---|
+|en|英文|
+|chs|简体中文|
+|cht|繁体中文|
+|th|泰语|
 
-```objective-c
-#import "IctitanUnionSDK.h"
-```
+#### 三方帐号类型
 
-事件中插入如下代码：
+|accountType|说明|
+|---|---|
+|google_ios|Google帐号|
+|facebook_ios|Facebook帐号|
+|appleid|AppleId帐号|
+|apple_gamecenter|apple帐号(Game Center)|
+|guest|游客帐号|
+|pinyou|品游帐号|
 
-```objective-c
-[[IctitanUnionSDK shareInstance] login];
-```
+#### 货币类型
 
-#### 2.4 注销
-
-在注销账号或切换账号时, 请务必调⽤用此接⼝, 再调⽤用登录接⼝。
-
-请在iOS程序的`ViewController.m`里的**按钮点击事件**或者**加载事件**中进行调用：
-
-引入header文件
-
-```objective-c
-#import "IctitanUnionSDK.h"
-```
-
-事件中插入如下代码：
-
-```objective-c
-[[IctitanUnionSDK shareInstance] logout];
-```
-
-#### 2.5 游戏服角色信息上报
-
-当玩家创建角色、进入游戏、角色等级升级的时候需要上报新角色信息
-
-引入header文件
-
-```objective-c
-#import "IctitanUnionSDK.h"
-#import "ITTRole.h"
-#import "ITTType.h"
-```
-
-事件中插入如下代码：
-
-```objective-c
-ITTRole *param = [[ITTRole alloc] init];
-[param setServerId:@"玩家所在服务器ID，不可为空或0"];
-[param setServerName:@"玩家所在服务器名"];
-[param setRoleId:@"玩家的游戏角色ID"];
-[param setRoleName:@"玩家的游戏角色名"];
-[param setRoleLevel:@"玩家的角色等级"];
-[param setRoleProfession:@"玩家的角色职业，没有可传空字符串"];
-// ITTReportType角色事件类型:
-// ITTROLE_EVENT_CREATE           创角
-// ITTROLE_EVENT_ENTERGAME        进入游戏
-// ITTROLE_EVENT_LEVELUPGRADE     升级
-[param setSendType:ITTROLE_EVENT_ENTERGAME];
-// 等级升级上报
-[[IctitanUnionSDK shareInstance] reportRoleInfo:param];
-```
-
-#### 2.6 支付
-
-需要传递完整的商品信息。
-
-请在iOS程序的`ViewController.m`里的**按钮点击事件**或者**加载事件**中进行调用：
-
-引入header文件
-
-```objective-c
-#import "IctitanUnionPaymentParam.h"
-#import "IctitanUnionSDK.h"
-```
-
-事件中插入如下代码：
-
-```objective-c
-IctitanUnionPaymentParam *param = [[IctitanUnionPaymentParam alloc] init];
-[param setServerId:@"玩家所在服务器ID，不可为空或0"];
-[param setServerName:@"玩家所在服务器名"];
-[param setRoleId:@"玩家的游戏角色ID"];
-[param setRoleName:@"玩家的游戏角色名"];
-[param setRoleLevel:@"玩家的角色等级"];
-[param setRoleProfession:@"玩家的角色职业，没有可传空字符串"];
-[param setProductId:@"游戏中商品ID"];
-[param setProductDescription:@"商品描述"];
-[param setAmount:@"购买该商品所需金额，如：1.0"];
-[param setCurrency:@"金额对应的币种，如：USD"];
-[param setExtra:@"支付成功时原样返回至游戏服务器的额外参数"];
-
-[[IctitanUnionSDK shareInstance] pay:param];
-```
-
-#### 2.7 调出用户中心
-
-```objective-c
-[[IctitanUnionSDK shareInstance] showUserCenter];
-```
-
-#### 2.8 浮窗控制
-
-```objective-c
-BOOL isShow = YES;
-
-[[IctitanUnionSDK shareInstance] showOrHiddenFloatMenu:isShow];
-```
-
-isShow参数：true为显示窗，false为关闭浮窗。（部分渠道无此接口，暂只支持部分渠道）
-
-#### 2.9 事件打点通用接口
-
-```objective-c
-NSDictionary *eventParams = @{@"level": 20, @"utype": @"task"};
-
-// UpgradeLevel 为事件名称，请参考运营对接文档
-[[IctitanUnionSDK shareInstance] trackEvent:@"UpgradeLevel" andEventParams:eventParams];
-```
-
-#### 2.10 分享功能
-
-```objective-c
-NSString *shareId = @"发行商平台分配的分享id";
-NSDictionary *shareParams = @{@"displayName": @"你好啊"};
-
-[[IctitanUnionSDK shareInstance] shareToSocialNetwork:shareId andShareParams:shareParams];
-```
+|currency|说明|
+|---|---|
+|USD|美元|
+|GC|游戏代币|
+|CNY|人民币|
