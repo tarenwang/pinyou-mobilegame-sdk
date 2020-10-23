@@ -12,4 +12,3 @@
 
 1. [iOS(AppStore)接入](client-ios-sdk-overview.md)
 2. [Android(GooglePlay)接入](client-google-sdk-overview.md)
-3. [Android(MOL支付)接入](client-mol-sdk-overview.md)

@@ -46,6 +46,25 @@ dependencies {
 }
 ```
 
+**NDK导入**
+
+将libs目录下的arm64-v8a、armeabi、armeabi-v7a、x86目录复制到游戏工程的libs目录中；其中NDK包依赖，以Android Studio为例，在`build.gradle`中加入依赖。
+
+```gradle
+defaultConfig {
+    multiDexEnabled true
+        ndk {
+            abiFilters "arm64-v8a","armeabi","armebi-v7a","x86"
+        }
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+}
+```
 
 #### 1.2 AndroidManifest.xml配置
 
