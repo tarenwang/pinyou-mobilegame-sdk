@@ -5,6 +5,7 @@
 | 修订号   | 修改描述       | 修改日期       |
 | ----- | -------- |  ---------- |
 | 1.0.0 | 初稿完成       | 2020-10-23 |
+| 1.1.0 | 增加了获取提审状态的接口      | 2020-10-26 |
 
 本文为iOS客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以Xcode为例），以及具有相应的编程知识基础等。
 
@@ -145,14 +146,14 @@ SDK提供给研发商两种接入登录的方式：
 
 // 不使用SDK登录界面，游戏自己实现Google、Facebook、还有游客登录的按钮；当按钮被点击时，分别调用以下接口
 // Google举例
-[[PYChannelSDK sharedInstance] loginWithThirdParty:@"google"];
+[[PYChannelSDK sharedInstance] loginWithThirdParty:@"google_ios"];
 ```
 
 所有的帐号类型`accountType`请参考附录中的[三方帐号类型](#三方帐号类型)
 
 #### 2.4 是否显示三方登录按钮(选接)
 
-当研发商选择游戏自己实现Google、Facebook等三方登录按钮的情况下，必须先调用此接口，如果返回`true`，才能在游戏中显示相关按钮；如果研发商选择使用SDK的登录界面，此接口不用接入。
+当研发商选择游戏自己实现Google、Facebook等三方登录按钮的情况下，必须先调用此接口，如果返回`true`，才能在游戏中显示相关按钮；如果研发商选择使用SDK的登录界面，此接口不用接入。**注意：此接口必须在初始化成功之后才能使用**
 
 引入header文件
 
@@ -163,7 +164,7 @@ SDK提供给研发商两种接入登录的方式：
 事件中插入如下代码：
 
 ```objective-c
-if ([[PYChannelSDK sharedInstance] showThirdPartyLoginButton:@"google"]) {
+if ([[PYChannelSDK sharedInstance] showThirdPartyLoginButton:@"google_ios"]) {
     // 游戏中显示Google登录按钮
 } else {
     // 游戏中隐藏Google登录按钮
@@ -172,7 +173,19 @@ if ([[PYChannelSDK sharedInstance] showThirdPartyLoginButton:@"google"]) {
 
 所有的帐号类型`accountType`请参考附录中的[三方帐号类型](#三方帐号类型)
 
-#### 2.5 支付(必接)
+#### 2.5 获取提审状态(选接)
+
+当游戏在各应用市场进行提审过程的时候，游戏客户端中需要展现特定的状态。比如登录方式，是否可以分享，内购商品的显示切换等。**注意：此接口必须在初始化成功之后才能使用**
+
+```objective-c
+if ([[PYChannelSDK sharedInstance] getReviewStatus] {
+    // 游戏中显示提审状态
+} else {
+    // 游戏中显示正式状态
+}
+```
+
+#### 2.6 支付(必接)
 
 本接口中sign签名请 [参考签名规则](server-api-overview.md#签名规则)，**参与签名计算的参数包含appId、accountId、token、productId、roleId、serverId、amount、currency、extra**。为了保障支付的安全性，签名计算请在游戏服务端中进行，保证`appSecret`不被非法破解获取。
 
@@ -205,7 +218,7 @@ PYChannelPayment *param = [[PYChannelPayment alloc] init];
 [[PYChannelSDK sharedInstance] pay:param];
 ```
 
-#### 2.6 注销登录(选接)
+#### 2.7 注销登录(选接)
 
 引入header文件
 
@@ -219,7 +232,7 @@ PYChannelPayment *param = [[PYChannelPayment alloc] init];
 [[PYChannelSDK sharedInstance] logout];
 ```
 
-#### 2.7 分享(选接)
+#### 2.8 分享(选接)
 
 引入header文件
 
@@ -236,7 +249,7 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
 [[PYChannelSDK sharedInstance] shareToSocialNetwork:shareId andShareParams:shareParams];
 ```
 
-#### 2.8 重要的重写方法
+#### 2.9 重要的重写方法
 
 重写AppDelegate的openURL、applicationDidBecomeActive以及continueUserActivity
 
@@ -276,7 +289,7 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
 }
 ```
 
-#### 2.9 回调接口
+#### 2.10 回调接口
 
 在游戏界面显示时，给SDK设置可以依附的UIViewController对象，并在该类文件增加PYChannelDelegate协议，请在此协议中实现游戏的初始化、登录、注销、支付、分享功能
 
@@ -366,7 +379,7 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
 @end
 ```
 
-#### 2.10 打开用户协议和隐私政策窗口(选接)
+#### 2.11 打开用户协议和隐私政策窗口(选接)
 
 当游戏客户端里需要显示的加入用户协议和隐私政策的时候，点击相应链接的时候需要调用此方法。
 
@@ -415,3 +428,4 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
 |USD|美元|
 |GC|游戏代币|
 |CNY|人民币|
+|TWD|台湾币|

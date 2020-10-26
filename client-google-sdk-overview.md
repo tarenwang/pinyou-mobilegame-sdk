@@ -6,6 +6,7 @@
 | ----- | -------- |  ---------- |
 | 1.0.0 | 初稿完成       | 2020-10-22 |
 | 1.1.0 | 增加了用户协议和隐私政策窗口      | 2020-10-26 |
+| 1.1.1 | 增加了获取提审状态的接口      | 2020-10-26 |
 
 本文为Android客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以AndroidStudio为例），以及具有相应的编程知识基础等。
 
@@ -276,7 +277,7 @@ PYLoginSDK.getInstance().loginWithThirdParty("google_playgame", new LoginCallbac
 
 #### 2.4 是否显示三方登录按钮(选接)
 
-当研发商选择游戏自己实现Google、Facebook等三方登录按钮的情况下，必须先调用此接口，如果返回`true`，才能在游戏中显示相关按钮；如果研发商选择使用SDK的登录界面，此接口不用接入。
+当研发商选择游戏自己实现Google、Facebook等三方登录按钮的情况下，必须先调用此接口，如果返回`true`，才能在游戏中显示相关按钮；如果研发商选择使用SDK的登录界面，此接口不用接入。**注意：此接口必须在初始化成功之后才能使用**
 
 ```java
 // Google举例
@@ -289,7 +290,19 @@ if (PYLoginSDK.getInstance().showThirdPartyLoginButton("google_playgame")) {
 
 所有的帐号类型`accountType`请参考附录中的[三方帐号类型](#三方帐号类型)
 
-#### 2.5 支付(必接)
+#### 2.5 获取提审状态(选接)
+
+当游戏在各应用市场进行提审过程的时候，游戏客户端中需要展现特定的状态。比如登录方式，是否可以分享，内购商品的显示切换等。**注意：此接口必须在初始化成功之后才能使用**
+
+```java
+if (PYLoginSDK.getInstance().getReviewStatus()) {
+    // 游戏中显示提审状态
+} else {
+    // 游戏中显示正式状态
+}
+```
+
+#### 2.6 支付(必接)
 
 本接口中sign签名请 [参考签名规则](server-api-overview.md#签名规则)，**参与签名计算的参数包含appId、accountId、token、productId、roleId、serverId、amount、currency、extra**。为了保障支付的安全性，签名计算请在游戏服务端中进行，保证`appSecret`不被非法破解获取。
 
@@ -324,7 +337,7 @@ PYPaySDK.getInstance().pay(param, new PayCallback() {
 });
 ```
 
-#### 2.6 注销登录(选接)
+#### 2.7 注销登录(选接)
 
 ```java
 PYLoginSDK.getInstance().logout(new LogoutCallback() {
@@ -340,7 +353,7 @@ PYLoginSDK.getInstance().logout(new LogoutCallback() {
 });
 ```
 
-#### 2.7 分享(选接)
+#### 2.8 分享(选接)
 
 ```java
 Map<String, Object> shareParams = new HashMap<?>();
@@ -365,7 +378,7 @@ PYLoginSDK.getInstance().share("SDK分配的分享ID", shareParams, new ShareCal
 });
 ```
 
-#### 2.8 Activity生命周期(必接)
+#### 2.9 Activity生命周期(必接)
 
 游戏主窗体中直接重写一下父类方法：
 
@@ -381,7 +394,7 @@ public void onDestroy() {
 }
 ```
 
-#### 2.9 打开用户协议和隐私政策窗口(选接)
+#### 2.10 打开用户协议和隐私政策窗口(选接)
 
 当游戏客户端里需要显示的加入用户协议和隐私政策的时候，点击相应链接的时候需要调用此方法。
 
@@ -439,3 +452,4 @@ android {
 |USD|美元|
 |GC|游戏代币|
 |CNY|人民币|
+|TWD|台湾币|
