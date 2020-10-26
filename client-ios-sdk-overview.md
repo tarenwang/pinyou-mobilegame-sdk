@@ -178,7 +178,7 @@ if ([[PYChannelSDK sharedInstance] showThirdPartyLoginButton:@"google_ios"]) {
 当游戏在各应用市场进行提审过程的时候，游戏客户端中需要展现特定的状态。比如登录方式，是否可以分享，内购商品的显示切换等。**注意：此接口必须在初始化成功之后才能使用**
 
 ```objective-c
-if ([[PYChannelSDK sharedInstance] getReviewStatus] {
+if ([[PYChannelSDK sharedInstance] getReviewStatus]) {
     // 游戏中显示提审状态
 } else {
     // 游戏中显示正式状态
