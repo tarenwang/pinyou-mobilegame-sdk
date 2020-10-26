@@ -5,6 +5,7 @@
 | 修订号   | 修改描述       | 修改日期       |
 | ----- | -------- |  ---------- |
 | 1.0.0 | 初稿完成       | 2020-10-22 |
+| 1.1.0 | 增加了用户协议和隐私政策窗口      | 2020-10-26 |
 
 本文为Android客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以AndroidStudio为例），以及具有相应的编程知识基础等。
 
@@ -378,6 +379,18 @@ public void onDestroy() {
     PYLoginSDK.getInstance().onDestroy();
     super.onDestroy();
 }
+```
+
+#### 2.9 打开用户协议和隐私政策窗口(选接)
+
+当游戏客户端里需要显示的加入用户协议和隐私政策的时候，点击相应链接的时候需要调用此方法。
+
+```java
+// 打开用户协议窗口
+PYLoginSDK.getInstance().openFullScreenWindow(PYLoginSDKOpenWindowType.USER_AGREEMENT);
+
+// 打开隐私政策窗口
+PYLoginSDK.getInstance().openFullScreenWindow(PYLoginSDKOpenWindowType.PRIVACY_POLICY);
 ```
 
 ### 三、打包注意事项

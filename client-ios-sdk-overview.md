@@ -346,24 +346,44 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
         //支付成功
         // 注意：SDK返回成功后，不能马上发送物品给玩家，要等到游戏服务端收到“内购商品支付完成通知”后才能发送
         NSLog(@"支付成功");
-    } else if (ITTCodeFail == code) {
+    } else {
         //支付失败
         NSLog(@"支付失败，msg=%@", message);
     }
 }
 
 // 分享回调
-- (void)IctitanUnionShareToSocialNetworkCallback:(UnionSdkCallbackCode)code andMessage:(NSString *)message {
-    if (ITTCodeSuc == code) {
+- (void)PYChannelPayCallback:(ChannelSdkCallbackCode)code andMessage:(NSString *)message {
+    if (PYChannelCodeSuc == code) {
         //分享成功
         NSLog(@"分享成功");
-    } else if (ITTCodeFail == code){
+    } else {
         //分享失败
         NSLog(@"分享失败，msg=%@", message);
     }
 }
 
 @end
+```
+
+#### 2.10 打开用户协议和隐私政策窗口(选接)
+
+当游戏客户端里需要显示的加入用户协议和隐私政策的时候，点击相应链接的时候需要调用此方法。
+
+引入header文件
+
+```objective-c
+#import "PYChannelSDK.h"
+```
+
+插入如下代码：
+
+```objective-c
+// 打开用户协议窗口
+[[PYChannelSDK sharedInstance] openFullScreenWindow:@"1"];
+
+// 打开隐私政策窗口
+[[PYChannelSDK sharedInstance] openFullScreenWindow:@"2"];
 ```
 
 ### 附录
