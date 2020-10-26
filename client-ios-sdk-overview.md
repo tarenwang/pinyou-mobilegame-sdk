@@ -366,13 +366,24 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
 }
 
 // 分享回调
-- (void)PYChannelPayCallback:(ChannelSdkCallbackCode)code andMessage:(NSString *)message {
+- (void)PYChannelShareToSocialNetworkCallback:(ChannelSdkCallbackCode)code andMessage:(NSString *)message {
     if (PYChannelCodeSuc == code) {
         //分享成功
         NSLog(@"分享成功");
     } else {
         //分享失败
         NSLog(@"分享失败，msg=%@", message);
+    }
+}
+
+// 切换语言回调
+- (void)PYChannelSwitchLanguageCallback:(ChannelSdkCallbackCode)code andMessage:(NSString *)message {
+    if (PYChannelCodeSuc == code) {
+        //切换语言成功
+        NSLog(@"切换语言成功");
+    } else {
+        //切换语言失败
+        NSLog(@"切换语言失败，msg=%@", message);
     }
 }
 
