@@ -329,7 +329,7 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
         NSLog(@"登录成功");
         _user = user;
         // user.accountId   帐号唯一标识
-        // user.token       登陆令牌
+        // user.token       登录令牌
         // user.username    帐号名
         // user.nickname    昵称
         // user.avatarUrl   用户头像URL

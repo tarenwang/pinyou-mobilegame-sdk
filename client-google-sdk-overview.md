@@ -7,6 +7,7 @@
 | 1.0.0 | 初稿完成       | 2020-10-22 |
 | 1.1.0 | 增加了用户协议和隐私政策窗口      | 2020-10-26 |
 | 1.1.1 | 增加了获取提审状态的接口      | 2020-10-26 |
+| 1.2.0 | 增加Application创建时调用的接口      | 2020-10-27 |
 
 本文为Android客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以AndroidStudio为例），以及具有相应的编程知识基础等。
 
@@ -174,7 +175,38 @@ defaultConfig {
 
 注：以下接口暂只提供直java层，具体java层与游戏层数据交互由接入方自行实现
 
-#### 2.1 初始化(必接)
+#### 2.1 Application初始化(必接)
+
+在Android应用创建的时候，必须调用此接口。
+
+引入SDK类：
+
+```java
+import com.pinyou.loginsdk.PYLoginSDK;
+```
+
+插入如下代码：
+
+```java
+public class MyApplication extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        // 应用初始化方法调用
+        PYLoginSDK.getInstance().applicationInit(this);
+    }
+}
+```
+
+#### 2.2 SDK初始化(必接)
+
+引入SDK类：
+
+```java
+import com.pinyou.loginsdk.PYLoginSDK;
+```
+
+插入如下代码：
 
 ```java
 PYLoginSDK.getInstance().init(activity, new InitCallbak() {
@@ -192,9 +224,17 @@ PYLoginSDK.getInstance().init(activity, new InitCallbak() {
 
 参数是游戏Activity对象（注意：必须游戏界面未启动前调用该接口，如不能保证可放在游戏MainActivity的`onCreate`生命周期中执行）
 
-#### 2.2 切换SDK显示语言(必接)
+#### 2.3 切换SDK显示语言(必接)
 
 此方法适用于多地区多语言发行的手游。研发商可以在游戏的任何地方使用此方法，SDK会根据选择的语言进行切换。
+
+引入SDK类：
+
+```java
+import com.pinyou.loginsdk.PYLoginSDK;
+```
+
+插入如下代码：
 
 ```java
 PYLoginSDK.getInstance().switchLanguage("en", SwitchLanguageCallback() {
@@ -212,13 +252,21 @@ PYLoginSDK.getInstance().switchLanguage("en", SwitchLanguageCallback() {
 
 所有的语言`language`请参考附录中的[显示语言](#显示语言)
 
-#### 2.3 登录(必接)
+#### 2.4 登录(必接)
 
 SDK提供给研发商两种接入登录的方式：
 1. SDK提供登录弹出界面，包含帐号、密码登录和各种三方登录
 2. 不使用SDK的登录界面，游戏自己实现各种三方登录的按钮
 
 研发商根据需要选择一种方式接入。
+
+引入SDK类：
+
+```java
+import com.pinyou.loginsdk.PYLoginSDK;
+```
+
+插入如下代码：
 
 ```java
 // 使用SDK登录界面
@@ -227,7 +275,7 @@ PYLoginSDK.getInstance().login(new LoginCallback() {
     public void onSuccess(UserInfo user) {
         // 登录成功
         // user.accountId   帐号唯一标识
-        // user.token       登陆令牌
+        // user.token       登录令牌
         // user.userName    帐号名
         // user.nickName    昵称
         // user.avatarUrl   用户头像URL
@@ -241,7 +289,7 @@ PYLoginSDK.getInstance().login(new LoginCallback() {
     }
 
     @Override
-    void void onFail(int code, String msg) {
+    public void onFail(int code, String msg) {
         // 登录错误
     }
 });
@@ -253,7 +301,7 @@ PYLoginSDK.getInstance().loginWithThirdParty("google_playgame", new LoginCallbac
     public void onSuccess(UserInfo user) {
         // 登录成功
         // user.accountId   帐号唯一标识
-        // user.token       登陆令牌
+        // user.token       登录令牌
         // user.userName    帐号名
         // user.nickName    昵称
         // user.avatarUrl   用户头像URL
@@ -267,7 +315,7 @@ PYLoginSDK.getInstance().loginWithThirdParty("google_playgame", new LoginCallbac
     }
 
     @Override
-    public void void onFail(int code, String msg) {
+    public void onFail(int code, String msg) {
         // 登录错误
     }
 });
@@ -275,9 +323,17 @@ PYLoginSDK.getInstance().loginWithThirdParty("google_playgame", new LoginCallbac
 
 所有的帐号类型`accountType`请参考附录中的[三方帐号类型](#三方帐号类型)
 
-#### 2.4 是否显示三方登录按钮(选接)
+#### 2.5 是否显示三方登录按钮(选接)
 
 当研发商选择游戏自己实现Google、Facebook等三方登录按钮的情况下，必须先调用此接口，如果返回`true`，才能在游戏中显示相关按钮；如果研发商选择使用SDK的登录界面，此接口不用接入。**注意：此接口必须在初始化成功之后才能使用**
+
+引入SDK类：
+
+```java
+import com.pinyou.loginsdk.PYLoginSDK;
+```
+
+插入如下代码：
 
 ```java
 // Google举例
@@ -290,9 +346,17 @@ if (PYLoginSDK.getInstance().showThirdPartyLoginButton("google_playgame")) {
 
 所有的帐号类型`accountType`请参考附录中的[三方帐号类型](#三方帐号类型)
 
-#### 2.5 获取提审状态(选接)
+#### 2.6 获取提审状态(选接)
 
 当游戏在各应用市场进行提审过程的时候，游戏客户端中需要展现特定的状态。比如登录方式，是否可以分享，内购商品的显示切换等。**注意：此接口必须在初始化成功之后才能使用**
+
+引入SDK类：
+
+```java
+import com.pinyou.loginsdk.PYLoginSDK;
+```
+
+插入如下代码：
 
 ```java
 if (PYLoginSDK.getInstance().getReviewStatus()) {
@@ -302,9 +366,17 @@ if (PYLoginSDK.getInstance().getReviewStatus()) {
 }
 ```
 
-#### 2.6 支付(必接)
+#### 2.7 支付(必接)
 
 本接口中sign签名请 [参考签名规则](server-api-overview.md#签名规则)，**参与签名计算的参数包含appId、accountId、token、productId、roleId、serverId、amount、currency、extra**。为了保障支付的安全性，签名计算请在游戏服务端中进行，保证`appSecret`不被非法破解获取。
+
+引入SDK类：
+
+```java
+import com.pinyou.paysdk.PYPaySDK;
+```
+
+插入如下代码：
 
 ```java
 PayParam param = new PayParam();
@@ -339,6 +411,14 @@ PYPaySDK.getInstance().pay(param, new PayCallback() {
 
 #### 2.7 注销登录(选接)
 
+引入SDK类：
+
+```java
+import com.pinyou.loginsdk.PYLoginSDK;
+```
+
+插入如下代码：
+
 ```java
 PYLoginSDK.getInstance().logout(new LogoutCallback() {
     @Override
@@ -354,6 +434,14 @@ PYLoginSDK.getInstance().logout(new LogoutCallback() {
 ```
 
 #### 2.8 分享(选接)
+
+引入SDK类：
+
+```java
+import com.pinyou.loginsdk.PYLoginSDK;
+```
+
+插入如下代码：
 
 ```java
 Map<String, Object> shareParams = new HashMap<?>();
@@ -380,7 +468,15 @@ PYLoginSDK.getInstance().share("SDK分配的分享ID", shareParams, new ShareCal
 
 #### 2.9 Activity生命周期(必接)
 
-游戏主窗体中直接重写一下父类方法：
+游戏主窗体中直接重写一下父类方法。
+
+引入SDK类：
+
+```java
+import com.pinyou.loginsdk.PYLoginSDK;
+```
+
+插入如下代码：
 
 ```java
 public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -397,6 +493,14 @@ public void onDestroy() {
 #### 2.10 打开用户协议和隐私政策窗口(选接)
 
 当游戏客户端里需要显示的加入用户协议和隐私政策的时候，点击相应链接的时候需要调用此方法。
+
+引入SDK类：
+
+```java
+import com.pinyou.loginsdk.PYLoginSDK;
+```
+
+插入如下代码：
 
 ```java
 // 打开用户协议窗口
