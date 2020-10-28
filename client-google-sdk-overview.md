@@ -10,6 +10,7 @@
 | 1.2.0 | 增加Application创建时调用的接口      | 2020-10-27 |
 | 1.3.0 | 增加第3种登录方式   | 2020-10-28 |
 | 1.4.0 | 增加游客绑定帐号接口   | 2020-10-28 |
+| 1.4.1 | SDK初始化返回状态增加onDeny   | 2020-10-28 |
 
 本文为Android客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以AndroidStudio为例），以及具有相应的编程知识基础等。
 
@@ -205,6 +206,12 @@ PYLoginSDK.getInstance().init(activity, new InitCallbak() {
     @Override
     public void onFail() {
         // 初始化失败
+    }
+
+    @Override
+    public void onDeny() {
+        // 用户没有授权，不能使用游戏
+        // 游戏停止加载资源、停止加载进入登录界面
     }
 });
 ```
