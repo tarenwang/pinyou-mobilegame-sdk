@@ -143,7 +143,8 @@ defaultConfig {
 
 **其他注意事项**
 
-- 项目targetSdkVersion必须设置为<span style="color:red">27</span>
+- 项目minSdkVersion必须设置为<span style="color:red">23</span>
+- 项目targetSdkVersion必须设置为<span style="color:red">29</span>
 - Unity3D游戏工程关闭自动权限申请功能
 
 ```xml
