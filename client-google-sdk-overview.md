@@ -8,6 +8,8 @@
 | 1.1.0 | 增加了用户协议和隐私政策窗口      | 2020-10-26 |
 | 1.1.1 | 增加了获取提审状态的接口      | 2020-10-26 |
 | 1.2.0 | 增加Application创建时调用的接口      | 2020-10-27 |
+| 1.3.0 | 增加第3种登录方式   | 2020-10-28 |
+| 1.4.0 | 增加游客绑定帐号接口   | 2020-10-28 |
 
 本文为Android客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以AndroidStudio为例），以及具有相应的编程知识基础等。
 
@@ -22,7 +24,7 @@
 
 **直接导入**
 
-导入`pinyouloginsdk-xxx.aar`、`pinyoupaysdk-xxx.aar`、`pinyouutilsdk.aar`并引入该aar包
+导入`pinyouloginsdk-xxx.aar`、`pinyoupaysdk-xxx.aar`、`pinyouutilsdk.aar`、`TRSec.jar`并引入
 
 **Gradle导入**
 
@@ -32,16 +34,17 @@
 allprojects {
     repositories {
         google()
+        jcenter()
+        mavenCentral()
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
+    ...
     
     implementation 'com.google.android.gms:play-services-auth:18.1.0'
-    implementation 'com.facebook.android:facebook-login:4.42.0'
+    implementation 'com.facebook.android:facebook-login:[5,6)'
+    implementation 'com.facebook.android:facebook-share:[5,6)'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.android.billingclient:billing:2.1.0'
     implementation 'com.squareup.okhttp3:okhttp:3.12.3'
@@ -78,6 +81,7 @@ defaultConfig {
 <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="com.android.vending.CHECK_LICENSE" />
 <uses-permission android:name="com.android.vending.BILLING" />
 ```
 
@@ -88,70 +92,53 @@ defaultConfig {
 ```xml
 <meta-data android:name="PINYOU_APPID" android:value="{appId}" />
 <meta-data android:name="PINYOU_SDK_URL" android:value="{sdkUrl}" />
-<meta-data android:name="com.facebook.sdk.ApplicationId" android:value="{facebook_app_id}" />
-<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
+<meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id" />
 ```
 
 **增加Activity界面的声明**
 
 ```xml
-<activity android:name="com.pinyou.loginsdk.third.WebActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/>
-<activity android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize" android:label="@string/app_name" android:name="com.facebook.FacebookActivity" android:theme="@style/com_facebook_activity_theme"/>
-<activity android:exported="true" android:name="com.facebook.CustomTabActivity">
+<activity
+    android:name="com.pinyou.loginsdk.third.WebActivity"
+    android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+<activity
+    android:name="com.facebook.FacebookActivity" android:configChanges= "keyboard|keyboardHidden|screenLayout|screenSize|orientation" 
+    android:label="@string/app_name" />
+<activity
+    android:name="com.facebook.CustomTabActivity" 
+    android:exported="true">
     <intent-filter>
-        <action android:name="android.intent.action.VIEW"/>
-        <category android:name="android.intent.category.DEFAULT"/>
-        <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="{fb_login_protocol_scheme}"/>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="@string/fb_login_protocol_scheme" />
     </intent-filter>
 </activity>
-<activity 
-    android:excludeFromRecents="true" 
-    android:exported="false" 
-    android:name="com.google.android.gms.auth.api.signin.internal.SignInHubActivity" 
-    android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
-<activity android:name="com.facebook.CustomTabMainActivity"/>
-<activity 
-    android:exported="false" 
-    android:name="com.google.android.gms.common.api.GoogleApiActivity" 
-    android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 ```
 
-**增加Service的声明**
+**增加Provider界面的声明**
 
 ```xml
-<service 
-    android:exported="true" 
-    android:name="com.google.android.gms.auth.api.signin.RevocationBoundService" 
-    android:permission="com.google.android.gms.auth.api.signin.permission.REVOCATION_NOTIFICATION"/>
+<provider
+    android:authorities="com.facebook.app.FacebookContentProvider{FB_APP_ID}" 
+    android:name="com.facebook.FacebookContentProvider" 
+    android:exported="true"/>
 ```
 
-**增加Provider的声明**
-
-```xml
-<provider android:authorities="com.facebook.app.FacebookContentProvider{FB_APP_ID}" android:exported="true" android:name="com.facebook.FacebookContentProvider"/>
-<provider android:authorities="{pkgname}.FacebookInitProvider" android:exported="false" android:name="com.facebook.internal.FacebookInitProvider"/>
-```
-
-**增加Receiver的声明**
-
-```xml
-<receiver android:exported="false" android:name="com.facebook.CurrentAccessTokenExpirationBroadcastReceiver">
-    <intent-filter>
-        <action android:name="com.facebook.sdk.ACTION_CURRENT_ACCESS_TOKEN_CHANGED"/>
-    </intent-filter>
-</receiver>
-```
+参数`{FB_APP_ID}`是游戏发行商或者SDK方提供的。
 
 #### 1.3 strings.xml配置
 
-增加Google和Facebook相关的配置信息
+打开您的`/app/res/values/strings.xml`文件，增加Google和Facebook相关的配置信息
 
 ```xml
 <string name="facebook_app_id">{FB_APP_ID}</string>
 <string name="fb_login_protocol_scheme">fb{FB_APP_ID}</string>
 <string name="server_client_id">{GOOGLE_CLIENT_ID}</string>
+<string name="google_license_key">{GOOGLE_LICENSE_KEY}</string>
 ```
+
+参数`{FB_APP_ID}`、`{GOOGLE_CLIENT_ID}`和`{GOOGLE_LICENSE_KEY}`是游戏发行商或者SDK方提供的。
 
 **其他注意事项**
 
@@ -254,9 +241,10 @@ PYLoginSDK.getInstance().switchLanguage("en", SwitchLanguageCallback() {
 
 #### 2.4 登录(必接)
 
-SDK提供给研发商两种接入登录的方式：
+SDK提供给研发商三种接入登录的方式：
 1. SDK提供登录弹出界面，包含帐号、密码登录和各种三方登录
 2. 不使用SDK的登录界面，游戏自己实现各种三方登录的按钮
+3. SDK提供登录弹出界面，只包含三方登录
 
 研发商根据需要选择一种方式接入。
 
@@ -319,6 +307,31 @@ PYLoginSDK.getInstance().loginWithThirdParty("google_playgame", new LoginCallbac
         // 登录错误
     }
 });
+
+// 使用SDK登录界面，只包含三方登录
+PYLoginSDK.getInstance().loginWithAllThirdParties(new LoginCallback() {
+    @Override
+    public void onSuccess(UserInfo user) {
+        // 登录成功
+        // user.accountId   帐号唯一标识
+        // user.token       登录令牌
+        // user.userName    帐号名
+        // user.nickName    昵称
+        // user.avatarUrl   用户头像URL
+        // user.loginType   帐号类型(facebook,google,apple,guest)
+        // user.firstLogin  是否首次登录
+    }
+
+    @Override
+    public void onCancel() {
+        // 登录取消
+    }
+
+    @Override
+    public void onFail(int code, String msg) {
+        // 登录错误
+    }
+});
 ```
 
 所有的帐号类型`accountType`请参考附录中的[三方帐号类型](#三方帐号类型)
@@ -346,7 +359,45 @@ if (PYLoginSDK.getInstance().showThirdPartyLoginButton("google_playgame")) {
 
 所有的帐号类型`accountType`请参考附录中的[三方帐号类型](#三方帐号类型)
 
-#### 2.6 获取提审状态(选接)
+#### 2.6 游客帐号绑定固定帐号(必接)
+
+当用户使用游客(`user.loginType="guest"`)方式进行登录后，游戏中应该显示的提供绑定帐号的菜单或者按钮，引导玩家进行帐号绑定工作。
+
+引入SDK类：
+
+```java
+import com.pinyou.loginsdk.PYLoginSDK;
+```
+
+插入如下代码：
+
+```java
+PYLoginSDK.getInstance().guestBinding(new BindingCallback() {
+    @Override
+    public void onSuccess(UserInfo user) {
+        // 绑定成功
+        // user.accountId   帐号唯一标识
+        // user.token       登录令牌
+        // user.userName    帐号名
+        // user.nickName    昵称
+        // user.avatarUrl   用户头像URL
+        // user.loginType   帐号类型(facebook,google,apple,guest)
+        // user.firstLogin  是否首次登录
+    }
+
+    @Override
+    public void onCancel() {
+        // 绑定取消
+    }
+
+    @Override
+    public void onFail(int code, String msg) {
+        // 绑定错误
+    }
+});
+```
+
+#### 2.7 获取提审状态(选接)
 
 当游戏在各应用市场进行提审过程的时候，游戏客户端中需要展现特定的状态。比如登录方式，是否可以分享，内购商品的显示切换等。**注意：此接口必须在初始化成功之后才能使用**
 
@@ -366,7 +417,7 @@ if (PYLoginSDK.getInstance().getReviewStatus()) {
 }
 ```
 
-#### 2.7 支付(必接)
+#### 2.8 支付(必接)
 
 本接口中sign签名请 [参考签名规则](server-api-overview.md#签名规则)，**参与签名计算的参数包含appId、accountId、token、productId、roleId、serverId、amount、currency、extra**。为了保障支付的安全性，签名计算请在游戏服务端中进行，保证`appSecret`不被非法破解获取。
 
@@ -409,7 +460,7 @@ PYPaySDK.getInstance().pay(param, new PayCallback() {
 });
 ```
 
-#### 2.7 注销登录(选接)
+#### 2.9 注销登录(选接)
 
 引入SDK类：
 
@@ -433,7 +484,7 @@ PYLoginSDK.getInstance().logout(new LogoutCallback() {
 });
 ```
 
-#### 2.8 分享(选接)
+#### 2.10 分享(选接)
 
 引入SDK类：
 
@@ -466,7 +517,7 @@ PYLoginSDK.getInstance().share("SDK分配的分享ID", shareParams, new ShareCal
 });
 ```
 
-#### 2.9 Activity生命周期(必接)
+#### 2.11 Activity生命周期(必接)
 
 游戏主窗体中直接重写一下父类方法。
 
@@ -490,7 +541,7 @@ public void onDestroy() {
 }
 ```
 
-#### 2.10 打开用户协议和隐私政策窗口(选接)
+#### 2.12 打开用户协议和隐私政策窗口(选接)
 
 当游戏客户端里需要显示的加入用户协议和隐私政策的时候，点击相应链接的时候需要调用此方法。
 
