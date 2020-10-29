@@ -25,7 +25,7 @@
 
 **直接导入**
 
-导入`pinyouloginsdk-xxx.aar`、`pinyoupaysdk-xxx.aar`、`pinyouutilsdk.aar`、`TRSec.jar`并引入
+导入`pinyouloginsdk-xxx.aar`、`pinyoupaysdk-xxx.aar`、`pinyouutilsdk.aar`并引入
 
 **Gradle导入**
 

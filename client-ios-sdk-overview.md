@@ -7,6 +7,7 @@
 | 1.0.0 | 初稿完成       | 2020-10-23 |
 | 1.1.0 | 增加了获取提审状态的接口      | 2020-10-26 |
 | 1.2.0 | 增加第3种登录方式和游客绑定帐号接口   | 2020-10-28 |
+| 1.2.1 | 修改初始化名init成initSDK   | 2020-10-29 |
 
 本文为iOS客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以Xcode为例），以及具有相应的编程知识基础等。
 
@@ -21,7 +22,7 @@
 
 **配置游戏相关参数**
 
-在`info.plist`里添加**品游的应用ID**和**品游SDK接口地址**，其中的`appId`、`sdkUrl`值是品游分配的值；参数`{FB_APP_ID}`、`{FB_DISPLAY_NAME}`、`{GOOGLE_CLIENT_ID}`和`{GOOGLE_REVERSED_CLIENT_ID}`是游戏发行商或者SDK方提供的。
+在`info.plist`里添加**品游的应用ID**和**品游SDK接口地址**，其中的`{appId}`、`{sdkUrl}`值是品游分配的值；参数`{FB_APP_ID}`、`{FB_DISPLAY_NAME}`、`{GOOGLE_CLIENT_ID}`和`{GOOGLE_REVERSED_CLIENT_ID}`是游戏发行商或者SDK方提供的。
 
 源码方式添加如下：
 
@@ -131,7 +132,7 @@
 ```objective-c
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     ...
-    [[PYChannelSDK sharedInstance] init];
+    [[PYChannelSDK sharedInstance] initSDK];
 
     ...
     return YES;

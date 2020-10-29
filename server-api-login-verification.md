@@ -6,7 +6,7 @@
 
 ### 请求地址
 
-> https://{sdkUrl}/user/userAuthentication
+> {sdkUrl}/user/userAuthentication
 
 具体地址由发行商提供
 
