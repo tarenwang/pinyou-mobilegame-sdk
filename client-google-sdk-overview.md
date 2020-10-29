@@ -11,6 +11,7 @@
 | 1.3.0 | 增加第3种登录方式   | 2020-10-28 |
 | 1.4.0 | 增加游客绑定帐号接口   | 2020-10-28 |
 | 1.4.1 | SDK初始化返回状态增加onDeny   | 2020-10-28 |
+| 1.5.0 | 增加报错解决方案   | 2020-10-29 |
 
 本文为Android客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以AndroidStudio为例），以及具有相应的编程知识基础等。
 
@@ -616,3 +617,9 @@ android {
 |GC|游戏代币|
 |CNY|人民币|
 |TWD|台湾币|
+
+### 注意
+
+#### 报错解决方案
+
+1. 假如游戏客户端引擎使用的是Unity，打包的时候出现SDK包中的`google-service`与Unity自带的`google-service`版本冲突下，会出现报错`Execution failed for task ':checkReleaseDuplicateClasses'...Duplicate class android.support.v4.app.INotificationSideChannel found in modules classes.jar (androidx.core:core:1.0.0) and classes.jar (com.android.support:support-compat:27.0.2)...`；请将`build.gradle`文件中的`implementation 'com.google.android.gms:play-services-auth:18.1.0'`改成`implementation 'com.google.android.gms:play-services-auth:15.0.0'`
