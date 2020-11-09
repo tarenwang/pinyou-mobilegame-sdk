@@ -12,6 +12,7 @@
 | 1.4.0 | 增加游客绑定帐号接口   | 2020-10-28 |
 | 1.4.1 | SDK初始化返回状态增加onDeny   | 2020-10-28 |
 | 1.5.0 | 增加报错解决方案   | 2020-10-29 |
+| 1.5.1 | meta-data里增加server_client_id   | 2020-11-09 |
 
 本文为Android客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以AndroidStudio为例），以及具有相应的编程知识基础等。
 
@@ -95,6 +96,7 @@ defaultConfig {
 <meta-data android:name="PINYOU_APPID" android:value="{appId}" />
 <meta-data android:name="PINYOU_SDK_URL" android:value="{sdkUrl}" />
 <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id" />
+<meta-data android:name="server_client_id" android:value="@string/server_client_id" />
 ```
 
 **增加Activity界面的声明**
