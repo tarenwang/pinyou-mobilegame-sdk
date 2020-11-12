@@ -13,6 +13,7 @@
 | 1.4.1 | SDK初始化返回状态增加onDeny   | 2020-10-28 |
 | 1.5.0 | 增加报错解决方案   | 2020-10-29 |
 | 1.5.1 | meta-data里增加server_client_id   | 2020-11-09 |
+| 1.5.2 | 支付接口里对金额小数作说明   | 2020-11-12 |
 
 本文为Android客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以AndroidStudio为例），以及具有相应的编程知识基础等。
 
@@ -451,7 +452,7 @@ param.SetRoleId("玩家的游戏角色ID");
 param.SetRoleName("玩家的游戏角色名");
 param.SetServerId("游戏服务器ID");
 param.SetServerName("游戏服务器名");
-param.SetAmount(1.00f);
+param.SetAmount(1.00f); // 必须带2位小数。注意，签名里不包含f
 param.SetCurrency("USD"); // 所有的货币类型`currency`请参考附录中的货币类型
 param.SetExtra("支付成功时原样返回至游戏服务器的额外参数；可以是游戏生成的订单号");
 param.SetNotifyUrl("内购商品支付完成的通知URL"); // 如果以SDK后台设置的通知URL为主，则此参数可以不传

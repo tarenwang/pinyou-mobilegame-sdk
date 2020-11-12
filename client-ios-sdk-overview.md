@@ -8,6 +8,7 @@
 | 1.1.0 | 增加了获取提审状态的接口      | 2020-10-26 |
 | 1.2.0 | 增加第3种登录方式和游客绑定帐号接口   | 2020-10-28 |
 | 1.2.1 | 修改初始化名init成initSDK   | 2020-10-29 |
+| 1.2.2 | 支付接口里对金额小数作说明   | 2020-11-12 |
 
 本文为iOS客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以Xcode为例），以及具有相应的编程知识基础等。
 
@@ -263,7 +264,7 @@ PYChannelPayment *param = [[PYChannelPayment alloc] init];
 [param setRoleName:@"玩家的游戏角色名"];
 [param setServerId:@"游戏服务器ID"];
 [param setServerName:@"游戏服务器名"];
-[param setAmount:@1.0];
+[param setAmount:@1.00]; // 必须带2位小数
 [param setCurrency:@"USD"]; // 所有的货币类型currency请参考附录中的货币类型
 [param setExtra:@"支付成功时原样返回至游戏服务器的额外参数；可以是游戏生成的订单号"];
 [param setNotifyUrl:@"内购商品支付完成的通知URL"]; // 如果以SDK后台设置的通知URL为主，则此参数可以不传
