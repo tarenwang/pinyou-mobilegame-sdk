@@ -14,6 +14,7 @@
 | 1.5.0 | 增加报错解决方案   | 2020-10-29 |
 | 1.5.1 | meta-data里增加server_client_id   | 2020-11-09 |
 | 1.5.2 | 支付接口里对金额小数作说明   | 2020-11-12 |
+| 1.5.3 | 支付接口sign签名的算法里去掉extra   | 2020-11-16 |
 
 本文为Android客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以AndroidStudio为例），以及具有相应的编程知识基础等。
 
@@ -431,7 +432,7 @@ if (PYLoginSDK.getInstance().getReviewStatus()) {
 
 #### 2.8 支付(必接)
 
-本接口中sign签名请 [参考签名规则](server-api-overview.md#签名规则)，**参与签名计算的参数包含appId、accountId、token、productId、roleId、serverId、amount、currency、extra**。为了保障支付的安全性，签名计算请在游戏服务端中进行，保证`appSecret`不被非法破解获取。
+本接口中sign签名请 [参考签名规则](server-api-overview.md#签名规则)，**参与签名计算的参数包含appId、accountId、token、productId、roleId、serverId、amount、currency**。为了保障支付的安全性，签名计算请在游戏服务端中进行，保证`appSecret`不被非法破解获取。
 
 引入SDK类：
 
