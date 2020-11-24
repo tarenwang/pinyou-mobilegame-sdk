@@ -502,7 +502,7 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
 插入如下代码：
 
 ```objective-c
-NSMutableArray *products = [[PYChannelSDK sharedInstance] getAllInAppProducts];
+NSDictionary *products = [[PYChannelSDK sharedInstance] getAllInAppProducts];
 // 其中PYInAppProduct类的属性说明
 // title: 商品名称
 // productId: SDK创建订单使用的商品id
