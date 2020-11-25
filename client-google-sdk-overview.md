@@ -16,6 +16,7 @@
 | 1.5.2 | 支付接口里对金额小数作说明   | 2020-11-12 |
 | 1.5.3 | 支付接口sign签名的算法里去掉extra   | 2020-11-16 |
 | 1.6.0 | 增加获取所有内购商品列表接口   | 2020-11-24 |
+| 1.7.0 | 增加退出游戏接口   | 2020-11-25 |
 
 本文为Android客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以AndroidStudio为例），以及具有相应的编程知识基础等。
 
@@ -598,6 +599,33 @@ List<InAppProduct> products = PYLoginSDK.getInstance().getAllInAppProducts();
 // sdkPrice: SDK创建订单使用的金额，保留2位小数
 // useCurrency: 玩家购买使用的货币
 // usePrice: 玩家购买需要花费的金额，保留2位小数
+```
+
+#### 2.14 退出游戏(选接)
+
+当玩家安卓手机上点击回退按钮的时候，需要弹出窗口让玩家确认是否退出游戏。请在`onKeyDown`默认方法里进行调用。
+
+**如果游戏自带退出游戏确认窗口，可以不调用本接口**
+
+引入SDK类：
+
+```java
+import com.pinyou.loginsdk.PYLoginSDK;
+```
+
+插入如下代码：
+
+```java
+@Override
+public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+        // 如果游戏有自己的退出游戏确认窗口，则以下应使用游戏的逻辑，不需要使用以下exitGame方法
+        PYLoginSDK.getInstance().exitGame();
+        return true;
+    }
+
+    return super.onKeyDown(keyCode, event);
+}
 ```
 
 ### 三、打包注意事项

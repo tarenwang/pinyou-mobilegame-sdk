@@ -11,6 +11,7 @@
 | 1.2.2 | 支付接口里对金额小数作说明   | 2020-11-12 |
 | 1.2.3 | 支付接口sign签名的算法里去掉extra   | 2020-11-16 |
 | 1.3.0 | 增加获取所有内购商品列表接口   | 2020-11-24 |
+| 1.3.1 | 初始化失败回调请继续调用初始化，保证SDK后续正常使用   | 2020-11-25 |
 
 本文为iOS客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以Xcode为例），以及具有相应的编程知识基础等。
 
@@ -348,7 +349,9 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
 
 #### 2.11 回调接口
 
-在游戏界面显示时，给SDK设置可以依附的UIViewController对象，并在该类文件增加PYChannelDelegate协议，请在此协议中实现游戏的初始化、登录、注销、支付、分享功能
+在游戏界面显示时，给SDK设置可以依附的UIViewController对象，并在该类文件增加PYChannelDelegate协议，请在此协议中实现游戏的初始化、登录、注销、支付、分享功能。
+
+> 注意：用户第一次打开app，会请求获取用户的网络权限，此时如果游戏已经开始调用初始化，会返回初始化失败；为了正常的进行游戏，请游戏在返回初始化失败后，继续调用初始化方法，直到成功为止，这样才能保证SDK的正常使用。
 
 ```objective-c
 #import <PYChannelSDK/PYChannelSDK.h>
@@ -376,6 +379,7 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
     } else {
         //初始化失败
         NSLog(@"初始化失败，msg=%@", message);
+        [[PYChannelSDK sharedInstance] initSDK]
     }
 }
 
