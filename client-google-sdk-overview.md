@@ -585,13 +585,13 @@ PYLoginSDK.getInstance().openFullScreenWindow(PYLoginSDKOpenWindowType.PRIVACY_P
 引入SDK类：
 
 ```java
-import com.pinyou.loginsdk.PYLoginSDK;
+import com.pinyou.paysdk.PYPaySDK;
 ```
 
 插入如下代码：
 
 ```java
-List<InAppProduct> products = PYLoginSDK.getInstance().getAllInAppProducts();
+List<InAppProduct> products = PYPaySDK.getInstance().getAllInAppProducts();
 // 其中InAppProduct类的属性说明
 // title: 商品名称
 // productId: SDK创建订单使用的商品id
