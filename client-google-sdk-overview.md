@@ -17,6 +17,7 @@
 | 1.5.3 | 支付接口sign签名的算法里去掉extra   | 2020-11-16 |
 | 1.6.0 | 增加获取所有内购商品列表接口   | 2020-11-24 |
 | 1.7.0 | 增加退出游戏接口   | 2020-11-25 |
+| 1.7.1 | 修改获取所有内购商品列表接口，使用回调方式  | 2020-11-30 |
 
 本文为Android客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以AndroidStudio为例），以及具有相应的编程知识基础等。
 
@@ -591,14 +592,23 @@ import com.pinyou.paysdk.PYPaySDK;
 插入如下代码：
 
 ```java
-List<InAppProduct> products = PYPaySDK.getInstance().getAllInAppProducts();
-// 其中InAppProduct类的属性说明
-// title: 商品名称
-// productId: SDK创建订单使用的商品id
-// sdkCurrency: SDK创建订单使用的货币
-// sdkPrice: SDK创建订单使用的金额，保留2位小数
-// useCurrency: 玩家购买使用的货币
-// usePrice: 玩家购买需要花费的金额，保留2位小数
+PYPaySDK.getInstance().getAllInAppProducts(new InAppProductCallback() {
+    @Override
+    public void onSuccess(List<InAppProduct> products) {
+        // 其中InAppProduct类的属性说明
+        // title: 商品名称
+        // productId: SDK创建订单使用的商品id
+        // sdkCurrency: SDK创建订单使用的货币
+        // sdkPrice: SDK创建订单使用的金额，保留2位小数
+        // useCurrency: 玩家购买使用的货币
+        // usePrice: 玩家购买需要花费的金额，保留2位小数
+    }
+
+    @Override
+    public void onFail(int code, String msg) {
+        // 获取错误
+    }
+});
 ```
 
 #### 2.14 退出游戏(选接)

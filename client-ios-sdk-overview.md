@@ -13,6 +13,7 @@
 | 1.3.0 | 增加获取所有内购商品列表接口   | 2020-11-24 |
 | 1.3.1 | 初始化失败回调请继续调用初始化，保证SDK后续正常使用   | 2020-11-25 |
 | 1.3.2 | Info.plist文件增加配置构建版本出口合规证明信息   | 2020-11-27 |
+| 1.3.3 | 修改获取所有内购商品列表接口，使用回调方式  | 2020-11-30 |
 
 本文为iOS客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以Xcode为例），以及具有相应的编程知识基础等。
 
@@ -368,6 +369,7 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
 #import <PYChannelSDK/PYChannelDelegate.h>
 #import <PYChannelSDK/PYChannelUser.h>
 #import <PYChannelSDK/PYChannelType.h>
+#import <PYChannelSDK/PYInAppProduct.h>
 
 @interface ViewController () <PYChannelDelegate>
 @property (nonatomic, strong) PYChannelUser *user;
@@ -477,6 +479,24 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
     }
 }
 
+// 获取内购商品列表回调
+- (void)PYChannelInAppProductCallback:(ChannelSdkCallbackCode)code andMessage:(NSString *)message andProducts:(NSArray *)products {
+    if (PYChannelCodeSuc == code) {
+        //获取成功
+        NSLog(@"获取成功");
+        _products = products;
+        // 其中PYInAppProduct类的属性说明
+        // products.title: 商品名称
+        // products.productId: SDK创建订单使用的商品id
+        // products.sdkCurrency: SDK创建订单使用的货币
+        // products.sdkPrice: SDK创建订单使用的金额，保留2位小数
+        // products.useCurrency: 玩家购买使用的货币
+        // products.usePrice: 玩家购买需要花费的金额，保留2位小数
+    } else {
+        //获取失败
+        NSLog(@"获取失败：%@", message);
+    }
+}
 @end
 ```
 
@@ -516,14 +536,7 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
 插入如下代码：
 
 ```objective-c
-NSDictionary *products = [[PYChannelSDK sharedInstance] getAllInAppProducts];
-// 其中PYInAppProduct类的属性说明
-// title: 商品名称
-// productId: SDK创建订单使用的商品id
-// sdkCurrency: SDK创建订单使用的货币
-// sdkPrice: SDK创建订单使用的金额，保留2位小数
-// useCurrency: 玩家购买使用的货币
-// usePrice: 玩家购买需要花费的金额，保留2位小数
+[[PYChannelSDK sharedInstance] getAllInAppProducts];
 ```
 
 ### 附录
