@@ -14,6 +14,7 @@
 | 1.3.1 | 初始化失败回调请继续调用初始化，保证SDK后续正常使用   | 2020-11-25 |
 | 1.3.2 | Info.plist文件增加配置构建版本出口合规证明信息   | 2020-11-27 |
 | 1.3.3 | 修改获取所有内购商品列表接口，使用回调方式  | 2020-11-30 |
+| 1.3.4 | 删除获取所有内购商品列表接口，保留回调方式  | 2020-12-01 |
 
 本文为iOS客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以Xcode为例），以及具有相应的编程知识基础等。
 
@@ -484,14 +485,13 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
     if (PYChannelCodeSuc == code) {
         //获取成功
         NSLog(@"获取成功");
-        _products = products;
-        // 其中PYInAppProduct类的属性说明
-        // products.title: 商品名称
-        // products.productId: SDK创建订单使用的商品id
-        // products.sdkCurrency: SDK创建订单使用的货币
-        // products.sdkPrice: SDK创建订单使用的金额，保留2位小数
-        // products.useCurrency: 玩家购买使用的货币
-        // products.usePrice: 玩家购买需要花费的金额，保留2位小数
+        // 其中数组返回的属性举例说明
+        // productId = "5702"; SDK创建订单使用的商品id
+        // sdkCurrency = "TWD"; SDK创建订单使用的货币
+        // sdkPrice = 70; SDK创建订单使用的金额，浮点型
+        // title = "\U8ecd\U706b\U5546\U4eba\U5546\U57ce2"; 商品名称
+        // useCurrency = "zh_TW@currency=TWD"; 玩家购买使用的货币
+        // usePrice = 70; 玩家购买需要花费的金额，浮点型
     } else {
         //获取失败
         NSLog(@"获取失败：%@", message);
@@ -518,25 +518,6 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
 
 // 打开隐私政策窗口
 [[PYChannelSDK sharedInstance] openFullScreenWindow:@"2"];
-```
-
-#### 2.13 获取游戏内购商品列表(选接)
-
-当游戏中需要根据玩家所在国家/地区使用的货币来自定义显示游戏中的内购使用货币和价格时，需要使用该方法。
-
-**注意：该方法必须在调用初始化方法后才能使用**
-
-引入header文件
-
-```objective-c
-#import <PYChannelSDK/PYChannelSDK.h>
-#import <PYChannelSDK/PYInAppProduct.h>
-```
-
-插入如下代码：
-
-```objective-c
-[[PYChannelSDK sharedInstance] getAllInAppProducts];
 ```
 
 ### 附录

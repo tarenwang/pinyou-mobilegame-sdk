@@ -599,9 +599,9 @@ PYPaySDK.getInstance().getAllInAppProducts(new InAppProductCallback() {
         // title: 商品名称
         // productId: SDK创建订单使用的商品id
         // sdkCurrency: SDK创建订单使用的货币
-        // sdkPrice: SDK创建订单使用的金额，保留2位小数
+        // sdkPrice: SDK创建订单使用的金额，浮点型
         // useCurrency: 玩家购买使用的货币
-        // usePrice: 玩家购买需要花费的金额，保留2位小数
+        // usePrice = "$564.59"; 玩家购买需要花费的金额，字符串类型
     }
 
     @Override
