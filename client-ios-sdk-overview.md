@@ -485,13 +485,15 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
     if (PYChannelCodeSuc == code) {
         //获取成功
         NSLog(@"获取成功");
-        // 其中数组返回的属性举例说明
-        // productId = "5702"; SDK创建订单使用的商品id
-        // sdkCurrency = "TWD"; SDK创建订单使用的货币
-        // sdkPrice = 70; SDK创建订单使用的金额，浮点型
-        // title = "\U8ecd\U706b\U5546\U4eba\U5546\U57ce2"; 商品名称
-        // useCurrency = "zh_TW@currency=TWD"; 玩家购买使用的货币
-        // usePrice = 70; 玩家购买需要花费的金额，浮点型
+        for (NSDictionary * dic in products) {
+            // productId = "5702"; SDK创建订单使用的商品id
+            // sdkCurrency = "TWD"; SDK创建订单使用的货币
+            // sdkPrice = 70; SDK创建订单使用的金额，浮点型
+            // title = "\U8ecd\U706b\U5546\U4eba\U5546\U57ce2"; 商品名称
+            // useCurrency = "zh_TW@currency=TWD"; apple后台货币类型
+            // usePrice = 70; apple后台商品价格
+        }
+        NSLog(@"商品信息%@", products);
     } else {
         //获取失败
         NSLog(@"获取失败：%@", message);
