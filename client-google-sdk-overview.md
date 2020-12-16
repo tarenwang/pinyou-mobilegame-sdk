@@ -19,6 +19,7 @@
 | 1.7.0 | 增加退出游戏接口   | 2020-11-25 |
 | 1.7.1 | 修改获取所有内购商品列表接口，使用回调方式  | 2020-11-30 |
 | 1.7.2 | 修改google结算库的版本  | 2020-12-11 |
+| 1.7.3 | 修改游客绑定账户方法的回调  | 2020-12-16 |
 
 本文为Android客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以AndroidStudio为例），以及具有相应的编程知识基础等。
 
@@ -386,12 +387,18 @@ if (PYLoginSDK.getInstance().showThirdPartyLoginButton("google_playgame")) {
 import com.pinyou.loginsdk.PYLoginSDK;
 ```
 
-插入如下代码：
+(选接) **假如游戏里设置了游客绑定账户功能，可以使用如下接口，否则，无需使用：**
 
 ```java
-PYLoginSDK.getInstance().guestBinding(new BindingCallback() {
+PYLoginSDK.getInstance().guestBinding();
+```
+
+(必接) 同时，绑定回调单独设置（越早越好，请在调用SDK初始化后执行调用）
+
+```java
+PYLoginSDK.getInstance().setBindCallback(new BindCallback() {
     @Override
-    public void onSuccess(UserInfo user) {
+    public void onSuccess(UserInfo userInfo) {
         // 绑定成功
         // user.accountId   帐号唯一标识
         // user.token       登录令牌
