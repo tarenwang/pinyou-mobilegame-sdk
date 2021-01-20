@@ -15,6 +15,7 @@
 | 1.3.2 | Info.plist文件增加配置构建版本出口合规证明信息   | 2020-11-27 |
 | 1.3.3 | 修改获取所有内购商品列表接口，使用回调方式  | 2020-11-30 |
 | 1.3.4 | 删除获取所有内购商品列表接口，保留回调方式  | 2020-12-01 |
+| 1.3.5 | 修改回调接口中的import头部文件  | 2021-01-20 |
 
 本文为iOS客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以Xcode为例），以及具有相应的编程知识基础等。
 
@@ -104,12 +105,6 @@
 在`TARGETS -> Info -> Custom iOS Target Properties`中添加`Localized resources can be mixed`和`Privacy - Photo Library Usage Description`，并设置`Allow Arbitrary Loads`为`YES`
 
 #### 1.2 通用配置
-
-**配置全屏**
-
-在`TARGETS -> General -> Deployment Info -> Status Bar Style`中勾选上`Requires full screen`
-
-![](assets/ios/6FF1C5DC-DF5E-4B18-8801-395AA139740B.png)
 
 **开启三方静态库**
 
@@ -366,11 +361,9 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
 > 注意：用户第一次打开app，会请求获取用户的网络权限，此时如果游戏已经开始调用初始化，会返回初始化失败；为了正常的进行游戏，请游戏在返回初始化失败后，继续调用初始化方法，直到成功为止，这样才能保证SDK的正常使用。
 
 ```objective-c
-#import <PYChannelSDK/PYChannelSDK.h>
 #import <PYChannelSDK/PYChannelDelegate.h>
-#import <PYChannelSDK/PYChannelUser.h>
-#import <PYChannelSDK/PYChannelType.h>
-#import <PYChannelSDK/PYInAppProduct.h>
+#import <PYChannelSDK/PYChannelSDK.h>
+#import <PYChannelSDK/PYChannelPayment.h>
 
 @interface ViewController () <PYChannelDelegate>
 @property (nonatomic, strong) PYChannelUser *user;
