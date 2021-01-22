@@ -21,6 +21,7 @@
 | 1.7.2 | 修改google结算库的版本  | 2020-12-11 |
 | 1.7.3 | 修改游客绑定账户方法的回调  | 2020-12-16 |
 | 1.7.4 | 增加MOL支付Activity | 2020-12-29 |
+| 1.7.5 | 删除build.gradle中的"armebi-v7a","x86" | 2021-01-22 |
 
 本文为Android客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以AndroidStudio为例），以及具有相应的编程知识基础等。
 
@@ -71,7 +72,7 @@ dependencies {
 defaultConfig {
     multiDexEnabled true
         ndk {
-            abiFilters "arm64-v8a","armeabi","armebi-v7a","x86"
+            abiFilters "arm64-v8a","armeabi"
         }
     }
 
