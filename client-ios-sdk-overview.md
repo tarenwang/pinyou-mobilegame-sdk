@@ -16,6 +16,7 @@
 | 1.3.3 | 修改获取所有内购商品列表接口，使用回调方式  | 2020-11-30 |
 | 1.3.4 | 删除获取所有内购商品列表接口，保留回调方式  | 2020-12-01 |
 | 1.3.5 | 修改回调接口中的import头部文件  | 2021-01-20 |
+| 1.4.0 | 增加appsflyer的三方广告归因功能  | 2021-01-29 |
 
 本文为iOS客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以Xcode为例），以及具有相应的编程知识基础等。
 
@@ -30,7 +31,7 @@
 
 **配置游戏相关参数**
 
-在`info.plist`里添加**品游的应用ID**和**品游SDK接口地址**，其中的`{appId}`、`{sdkUrl}`值是品游分配的值；参数`{FB_APP_ID}`、`{FB_DISPLAY_NAME}`、`{GOOGLE_CLIENT_ID}`和`{GOOGLE_REVERSED_CLIENT_ID}`是游戏发行商或者SDK方提供的。
+在`info.plist`里添加**品游的应用ID**和**品游SDK接口地址**，其中的`{appId}`、`{sdkUrl}`值是品游分配的值；参数`{FB_APP_ID}`、`{FB_DISPLAY_NAME}`、`{GOOGLE_CLIENT_ID}`、`{GOOGLE_REVERSED_CLIENT_ID}`、`{PY_ADM_TYPE}`、`{PY_AF_DEV_KEY}`和`{PY_AF_APPLE_APP_ID}`是游戏发行商或者SDK方提供的。
 
 源码方式添加如下：
 
@@ -73,6 +74,12 @@
 	<string>fbauth2</string>
 	<string>fbshareextension</string> 
 </array>
+<key>PY_ADM_TYPE</key>
+<string>{PY_ADM_TYPE}</string>
+<key>PY_AF_DEV_KEY</key>
+<string>{PY_AF_DEV_KEY}</string>
+<key>PY_AF_APPLE_APP_ID</key>
+<string>{PY_AF_APPLE_APP_ID}</string>
 ```
 
 **配置构建版本出口合规证明信息**
@@ -351,6 +358,11 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
 
     ...
     return YES;
+}
+
+// Report Push Notification attribution data for re-engagements
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+    [[PYChannelSDK sharedInstance] application:application didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
 }
 ```
 
