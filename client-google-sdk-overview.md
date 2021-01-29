@@ -22,6 +22,7 @@
 | 1.7.3 | 修改游客绑定账户方法的回调  | 2020-12-16 |
 | 1.7.4 | 增加MOL支付Activity | 2020-12-29 |
 | 1.7.5 | 删除build.gradle中的"armebi-v7a","x86" | 2021-01-22 |
+| 1.8.0 | 增加appsflyer的三方广告归因功能  | 2021-01-29 |
 
 本文为Android客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以AndroidStudio为例），以及具有相应的编程知识基础等。
 
@@ -61,6 +62,8 @@ dependencies {
     implementation 'com.android.billingclient:billing:3.0.1'
     implementation 'com.squareup.okhttp3:okhttp:3.12.3'
     implementation 'com.squareup.okio:okio:1.15.0'
+    implementation 'com.appsflyer:af-android-sdk:6.0.0'
+    implementation 'com.android.installreferrer:installreferrer:1.1'
 }
 ```
 
@@ -106,6 +109,8 @@ defaultConfig {
 <meta-data android:name="PINYOU_SDK_URL" android:value="{sdkUrl}" />
 <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id" />
 <meta-data android:name="server_client_id" android:value="@string/server_client_id" />
+<meta-data android:name="PY_ADM_TYPE" android:value="{PY_ADM_TYPE}" />
+<meta-data android:name="PY_AF_DEV_KEY" android:value="{PY_AF_DEV_KEY}" />
 ```
 
 **增加Activity界面的声明**
@@ -132,13 +137,23 @@ defaultConfig {
     android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"></activity>
 ```
 
-**增加Provider界面的声明**
+**增加Provider的声明**
 
 ```xml
 <provider
     android:authorities="com.facebook.app.FacebookContentProvider{FB_APP_ID}" 
     android:name="com.facebook.FacebookContentProvider" 
     android:exported="true"/>
+```
+
+**增加Receiver的声明**
+
+```xml
+<receiver android:name="com.appsflyer.SingleInstallBroadcastReceiver" android:exported="true">
+	<intent-filter>
+		<action android:name="com.android.vending.INSTALL_REFERRER" />
+	</intent-filter>
+</receiver>
 ```
 
 参数`{FB_APP_ID}`是游戏发行商或者SDK方提供的。
@@ -187,12 +202,13 @@ defaultConfig {
 
 ```java
 import com.pinyou.loginsdk.PYLoginSDK;
+import com.pinyou.utilsdk.AppsFlyer.PinyouAFApplication;
 ```
 
 插入如下代码：
 
 ```java
-public class MyApplication extends Application {
+public class MyApplication extends PinyouAFApplication {
     @Override
     public void onCreate() {
         super.onCreate();
