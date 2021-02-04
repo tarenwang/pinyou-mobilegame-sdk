@@ -23,6 +23,7 @@
 | 1.7.4 | 增加MOL支付Activity | 2020-12-29 |
 | 1.7.5 | 删除build.gradle中的"armebi-v7a","x86" | 2021-01-22 |
 | 1.8.0 | 增加appsflyer的三方广告归因功能  | 2021-01-29 |
+| 1.8.1 | 修改NDK支持的CPU架构  | 2021-02-04 |
 
 本文为Android客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以AndroidStudio为例），以及具有相应的编程知识基础等。
 
@@ -69,13 +70,13 @@ dependencies {
 
 **NDK导入**
 
-将libs目录下的arm64-v8a、armeabi、armeabi-v7a、x86目录复制到游戏工程的libs目录中；其中NDK包依赖，以Android Studio为例，在`build.gradle`中加入依赖。
+将libs目录下的arm64-v8a、armeabi-v7a目录复制到游戏工程的libs目录中；其中NDK包依赖，以Android Studio为例，在`build.gradle`中加入依赖。
 
 ```gradle
 defaultConfig {
     multiDexEnabled true
         ndk {
-            abiFilters "arm64-v8a","armeabi"
+            abiFilters "arm64-v8a","armeabi-v7a"
         }
     }
 
