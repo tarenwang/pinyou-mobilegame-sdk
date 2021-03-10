@@ -17,6 +17,7 @@
 | 1.3.4 | 删除获取所有内购商品列表接口，保留回调方式  | 2020-12-01 |
 | 1.3.5 | 修改回调接口中的import头部文件  | 2021-01-20 |
 | 1.4.0 | 增加appsflyer的三方广告归因功能  | 2021-01-29 |
+| 1.5.0 | 增加Appsflyer广告监测自定义事件上报接口  | 2021-03-10 |
 
 本文为iOS客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以Xcode为例），以及具有相应的编程知识基础等。
 
@@ -525,6 +526,24 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
 
 // 打开隐私政策窗口
 [[PYChannelSDK sharedInstance] openFullScreenWindow:@"2"];
+```
+
+#### 2.13 Appsflyer广告监测自定义事件上报(选接)
+
+SDK默认使用Appsflyer作为广告监测和归因的SDK渠道，当需要对一些自定义事件进行埋点并统计的时候，需要调用此接口。
+
+引入header文件
+
+```objective-c
+#import <PYChannelSDK/PYChannelSDK.h>
+```
+
+插入如下代码：
+
+```objective-c
+// 自定义事件的参数，可以为null
+NSDictionary *params = @{@"key1": @"123456"};
+[[PYChannelSDK sharedInstance] CustomsEvent:@"af_事件名称" eventDic:params];
 ```
 
 ### 附录

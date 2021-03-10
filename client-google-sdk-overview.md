@@ -24,6 +24,7 @@
 | 1.7.5 | 删除build.gradle中的"armebi-v7a","x86" | 2021-01-22 |
 | 1.8.0 | 增加appsflyer的三方广告归因功能  | 2021-01-29 |
 | 1.8.1 | 修改NDK支持的CPU架构  | 2021-02-04 |
+| 1.9.0 | 增加Appsflyer广告监测自定义事件上报接口  | 2021-03-10 |
 
 本文为Android客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以AndroidStudio为例），以及具有相应的编程知识基础等。
 
@@ -666,6 +667,25 @@ public boolean onKeyDown(int keyCode, KeyEvent event) {
 
     return super.onKeyDown(keyCode, event);
 }
+```
+
+#### 2.15 Appsflyer广告监测自定义事件上报(选接)
+
+SDK默认使用Appsflyer作为广告监测和归因的SDK渠道，当需要对一些自定义事件进行埋点并统计的时候，需要调用此接口。
+
+引入SDK类：
+
+```java
+import com.pinyou.utilsdk.AppsFlyer.PinyouAFApi;
+```
+
+插入如下代码：
+
+```java
+// 自定义事件的参数，可以为null
+Map<String,Object> params = new HashMap<>();
+params.put("key1", new Object());
+PinyouAFApi.getInstance().CustomsEvent(this, "af_事件名称", params);
 ```
 
 ### 三、打包注意事项
