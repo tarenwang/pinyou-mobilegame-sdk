@@ -7,6 +7,7 @@
 1. [服务端API接入概述](server-api-overview.md)
 2. [登录验证](server-api-login-verification.md)
 3. [内购商品支付完成通知](server-api-payment-notification.md)
+4. [内购商品退款通知](server-api-refund-notification.md)
 
 ### 客户端SDK接入
 
