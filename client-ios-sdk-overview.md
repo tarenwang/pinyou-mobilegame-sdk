@@ -18,6 +18,7 @@
 | 1.3.5 | 修改回调接口中的import头部文件  | 2021-01-20 |
 | 1.4.0 | 增加appsflyer的三方广告归因功能  | 2021-01-29 |
 | 1.5.0 | 增加Appsflyer广告监测自定义事件上报接口  | 2021-03-10 |
+| 1.6.0 | 增加ATT相关接口  | 2021-05-10 |
 
 本文为iOS客户端接入本SDK的使用教程，只涉及SDK的使用方法，默认读者已经熟悉IDE的基本使用方法（本文以Xcode为例），以及具有相应的编程知识基础等。
 
@@ -107,6 +108,22 @@
     <true/>
 </dict>
 ```
+
+**配置广告追踪授权文本**
+
+iOS14.5后，apple强制要求开发者在应用打开时弹出确认框，确认是否运行应用跟踪用户的行为，需要在`Info.plist`里配置相关的弹窗文字。
+
+```xml
+<key>NSUserTrackingUsageDescription</key>
+<string>Enable "Allow Apps to Request to Track" to allow us to provide you with more personalized service, including recommendations for your favorite clothing and push notifications for gifts. You can disable it any time via "Settings - Privacy".</string>
+```
+
+<span style="color:red">如果需要配置多语言，需要以下步骤：</span>
+
+1. 在XCode根目录下新建`InfoPlist.strings`文件
+2. 新建以后，在XCode右侧属性窗口中点击`localize...`按钮，选择需要创建的语言列表
+3. 点击`Info.plist`文件，右键点击`Raw Keys & Values`，选择对应的Key，比如：NSUserTrackingUsageDescription
+4. 把`NSUserTrackingUsageDescription`拷贝到`InfoPlist.strings`作为Key，分别在不同的语言下添加相应的Value就可以；相关对语言的值可参考附录中的[NSUserTrackingUsageDescription多语言值](#nsusertrackingusagedescription多语言值)
 
 **配置本地语言可获取**
 
@@ -330,6 +347,8 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
 
 ```objective-c
 #import <PYChannelSDK/PYChannelSDK.h>
+#import <AdSupport/AdSupport.h>
+#import <AppTrackingTransparency/AppTrackingTransparency.h>
 ```
 
 插入如下代码：
@@ -355,6 +374,14 @@ NSDictionary *shareParams = @{@"displayName": @"你好啊"};
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+
+    // iOS14及以上版本需要先请求权限
+    if (@available(iOS 14, *)) {
+        [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
+
+        }];
+    }
+
     [[PYChannelSDK sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
 
     ...
@@ -576,3 +603,12 @@ NSDictionary *params = @{@"key1": @"123456"};
 |GC|游戏代币|
 |CNY|人民币|
 |TWD|台湾币|
+
+#### NSUserTrackingUsageDescription多语言值
+
+|语言|值|
+|---|---|
+|Base & English|Enable "Allow Apps to Request to Track" to allow us to provide you with more personalized service, including recommendations for your favorite clothing and push notifications for gifts. You can disable it any time via "Settings - Privacy".|
+|Chinese - Simplified|选择“允许追踪”，以便向您提供更个性化的服务，例如您喜爱服装推荐和礼品推送，未经同意我们不会用于其他目的。开启后，您也可以前往系统“设置-隐私”中随时关闭。|
+|泰语|เลือก"อนุญาตให้ติดตาม"เพื่อให้เรานำเสนอบริการที่เหมาะสมกับคุณยิ่งขึ้น ตัวอย่างเช่น ข้อความพุชแนะนำเสื้อผ้าและของขวัญที่คุณชื่นชอบ ซึ่งเราจะไม่ใช้งานเพื่อวัตถุประสงค์อื่นโดยไม่ได้รับการอนุญาตจากคุณ หลังเปิดใช้งานแล้ว คุณสามารถไปที่ระบบ"ตั้งค่า-ความเป็นส่วนตัว"เพื่อปิดใช้งานได้|
+|印尼语|Pilih "Ijinkan Pelacakan" untuk menyediakan layanan yang lebih personal bagi Anda, seperti rekomendasi pakaian dan bingkisan favorit. Kami tidak akan menggunakannya untuk tujuan lain tanpa persetujuan Anda. Setelah diaktifkan, Anda bisa menonaktifkannya kapanpun di "Pengaturan - Privasi".|
