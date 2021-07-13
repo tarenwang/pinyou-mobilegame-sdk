@@ -154,7 +154,7 @@
 <script src="pysdk.min.js"></script>
 ```
 
-**动态创建script块导入(推荐使用)**
+**或 动态创建script块导入(推荐使用)**
 
 ```html
 <script>
@@ -303,7 +303,7 @@ PySDK.bind();
 
 ```html
 <script>
-// 游客绑定
+// 获取提审状态
 if (PySDK.getReviewStatus()) {
     // 游戏中显示提审状态
 } else {
@@ -368,13 +368,14 @@ PySDK.openPrivacyPolicy();
 ```html
 <script>
 var products = PySDK.getAllInAppProducts();
-for (var p in products) {
-    console.log(p.title); //商品名称
-    console.log(p.productId); //SDK创建订单使用的商品id
-    console.log(p.sdkCurrency); //SDK创建订单使用的货币
-    console.log(p.sdkPrice); //SDK创建订单使用的金额，浮点型
-    console.log(p.useCurrency); //玩家购买使用的货币
-    console.log(p.usePrice); //玩家购买需要花费的金额，字符串类型
+for (var i=0; i<products.length; i++) {
+    var str = "商品名称=" + products[i].title; //商品名称
+    str += ", 商品id=" + products[i].productId; //SDK创建订单使用的商品id
+    str += ", 货币=" + products[i].sdkCurrency; //SDK创建订单使用的货币
+    str += ", 金额=" + products[i].sdkPrice; //SDK创建订单使用的金额，浮点型
+    str += ", 游戏显示货币=" + products[i].useCurrency; //玩家购买使用的货币
+    str += ", 游戏显示金额=" + products[i].usePrice; //玩家购买需要花费的金额，字符串类型
+    console.log("内购物品信息: " + str);
 }
 </script>
 ```
