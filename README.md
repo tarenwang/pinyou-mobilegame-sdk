@@ -12,4 +12,5 @@
 ### 客户端SDK接入
 
 1. [iOS(AppStore)接入](client-ios-sdk-overview.md)
-2. [Android(GooglePlay)接入](client-google-sdk-overview.md)
+2. [Android(GooglePlay&MyCard支付)接入](client-google-sdk-overview.md)
+2. [H5(MyCard支付)接入](client-h5-sdk-overview.md)
