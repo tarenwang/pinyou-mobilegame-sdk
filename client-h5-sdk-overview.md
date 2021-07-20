@@ -29,9 +29,16 @@
 
 请将游戏的图标`favicon.ico`（尺寸128x128像素）的文件放入H5手游主页面所在的域名根目录下
 
-#### 1.3 iOS设备将网页加入桌面的配置
+#### 1.3 将网页加入桌面的配置
 
 ```html
+<!-- 各浏览器全屏 -->
+<meta name="full-screen" content="true" />
+<meta name="screen-orientation" content="portrait" />
+<meta name="x5-orientation" content="portrait" />
+<meta name="x5-fullscreen" content="true" />
+<meta name="360-fullscreen" content="true" />
+<meta name="mobile-web-app-capable" content="yes" />
 <!-- ios主界面 -->
 <meta name="application-name" content="游戏名称">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -256,6 +263,7 @@ var config = {
     'versionName' : '12',
     'debug' : true,
     'apkDownloadUrl' : '',
+    'mycardReturnUrl' : '{MYCARD_RETURN_URL}',
 };
 
 // 初始化
@@ -273,7 +281,8 @@ PySDK.init(config);
 |versionCode|是|版本号|
 |versionName|是|版本build号|
 |debug|是|调试模式，是否显示![](assets/vconsole.png)|
-|apkDownloadUrl|否|当玩家使用android手机浏览器玩游戏时，界面弹出提示推荐玩家下载apk|
+|apkDownloadUrl|否|当玩家使用android手机浏览器玩游戏时，界面弹出提示推荐玩家下载apk使用的地址|
+|mycardReturnUrl|是|MyCard支付使用的回调地址，请将SDK中的`py_mycard_return.html`保存在互联网中，并将其访问地址赋值给这个参数，其中网页中的配置请参考[MyCard回调网页说明](#mycard回调网页说明)|
 
 #### 2.4 登录(必接)
 
@@ -408,3 +417,7 @@ for (var i=0; i<products.length; i++) {
 |GC|游戏代币|
 |CNY|人民币|
 |TWD|台湾币|
+
+#### MyCard回调网页说明
+
+请将SDK中`py_mycard_return.html`文件上传到互联网能访问的服务器中，并设置好文件中调用`pysdk.min.js`的地址。
